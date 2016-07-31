@@ -1,4 +1,4 @@
-package sudoku;
+package sudokusolver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,45 +28,47 @@ public class SudokuSolver {
 //				{ 11, 4, -1, 13, -1, -1, -1, -1, -1, -1, -1, -1, 3, -1, -1, 5 },
 //				{ -1, 5, -1, -1, 15, -1, -1, 6, 0, 4, -1, -1, 9, -1, -1, -1 }};
 
-		int[][] puzzle = new int[][] {
-			{ 1, 0, 0, 2, 3, 4, 0, 0, 12,  },
-			{ 0, 0, 0, 7, 4, 0, 8, 0, 9 },
-			{ 0, 6, 8, 1, 0, 9, 0, 0, 2 },
-			{ 0, 3, 5, 4, 0, 0, 0, 0, 8 },
-			{ 6, 0, 7, 8, 0, 2, 5, 0, 1 },
-			{ 8, 0, 0, 0, 0, 5, 7, 6, 0 },
-			{ 2, 0, 0, 6, 0, 3, 1, 9, 0 },
-			{ 7, 0, 9, 0, 2, 1, 0, 0, 0 },
-			{ 0, 0, 0, 9, 7, 4, 0, 8, 0 }
+		int[][] puzzle = {
+				{6, 0, 0, 0, 2, 0, 0, 0, 9}, 
+				{0, 1, 0, 3, 0, 7, 0, 5, 0}, 
+				{0, 0, 3, 0, 0, 0, 1, 0, 0}, 
+				{0, 9, 0, 0, 0, 0, 0, 2, 0}, 
+				{2, 0, 0, 8, 7, 5, 0, 0, 3}, 
+				{0, 0, 5, 0, 1, 0, 4, 0, 0}, 
+				{0, 7, 0, 0, 8, 0, 0, 9, 0}, 
+				{0, 0, 1, 0, 4, 0, 8, 0, 0}, 
+				{0, 0, 0, 2, 5, 9, 0, 0, 0} 
 		};
 		int [][] solution = new SudokuSolver(puzzle).solve();
 		System.out.println(Arrays.stream(solution)
-				.map(row -> Arrays.stream(row).mapToObj(i -> Integer.toString(i, 16).toUpperCase()).collect(Collectors.joining(" ")))
+				.map(row -> Arrays.stream(row).mapToObj(Integer::toString).collect(Collectors.joining(" ")))
 				.collect(Collectors.joining("\n")));
 	}
 
 	private static final int CONSTRAINT_COUNT = 4;
 
 	private int[][] puzzle;
-	int size;
-	int boxSide;
+	private SudokuParams params;
 
 	public SudokuSolver(int[][] puzzle) {
+		this(puzzle, SudokuParams.CLASSIC_PARAMS);
+	}
+
+	public SudokuSolver(int[][] puzzle, SudokuParams params) {
 		this.puzzle = puzzle;
-		this.size = puzzle.length;
-		this.boxSide = (int) Math.sqrt(size);
+		this.params = params;
 	}
 
 	public int[][] solve() {
 		List<boolean[]> allValues = new ArrayList<>();
-		for (int row = 0; row < size; row++) {
-			for (int col = 0; col < size; col++) {
+		for (int row = 0; row < params.getSize(); row++) {
+			for (int col = 0; col < params.getSize(); col++) {
 				int value = puzzle[row][col];
 
 				allValues.addAll(getValues(value, row, col));
 			}
 		}
-		boolean[][] puzzleArray = new boolean[allValues.size()][size * size * CONSTRAINT_COUNT];
+		boolean[][] puzzleArray = new boolean[allValues.size()][params.getSize() * params.getSize() * CONSTRAINT_COUNT];
 		for (int row = 0; row < allValues.size(); row++) {
 			puzzleArray[row] = allValues.get(row);
 		}
@@ -78,6 +80,7 @@ public class SudokuSolver {
 	}
 
 	private int[][] convertSolution(List<List<Integer>> solution) {
+		int size = params.getSize();
 		int[][] board = new int[size][size];
 
 		for (List<Integer> cell : solution) {
@@ -93,8 +96,8 @@ public class SudokuSolver {
 	}
 
 	private List<boolean[]> getValues(int value, int row, int col) {
-		return getValues((value == -1) ?
-				IntStream.range(0, size).mapToObj(Integer::valueOf).collect(Collectors.toList()) : Arrays.asList(Integer.valueOf(value)),
+		return getValues((value == 0) ?
+				IntStream.range(0, params.getSize()).mapToObj(Integer::valueOf).collect(Collectors.toList()) : Arrays.asList(Integer.valueOf(value - 1)),
 				row, col, boxForCoords(row, col));
 	}
 
@@ -105,7 +108,7 @@ public class SudokuSolver {
 	}
 
 	private boolean[] getRow(int value, int row, int col, int box) {
-		boolean[] fullRow = new boolean[size * size * CONSTRAINT_COUNT];
+		boolean[] fullRow = new boolean[params.getSize() * params.getSize() * CONSTRAINT_COUNT];
 		int offset = 0;
 		for (boolean b : getSubRow(value, row)) {
 			fullRow[offset] = b;
@@ -127,10 +130,12 @@ public class SudokuSolver {
 	}
 
 	private Boolean[] getSubRow(int constraint1, int constraint2) {
-		return IntStream.range(0, size * size).mapToObj(index -> (index == constraint1 * size + constraint2)).toArray(Boolean[]::new);
+		return IntStream.range(0, params.getSize() * params.getSize())
+				.mapToObj(index -> Boolean.valueOf(index == constraint1 * params.getSize() + constraint2))
+				.toArray(Boolean[]::new);
 	}
 
 	private int boxForCoords(int row, int col) {
-		return (row / boxSide * boxSide) + (col / boxSide);
+		return (row / params.getBoxSide() * params.getBoxSide()) + (col / params.getBoxSide());
 	}
 }
