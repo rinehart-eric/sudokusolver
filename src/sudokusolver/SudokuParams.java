@@ -11,6 +11,7 @@ public class SudokuParams {
 	private int boxSide;
 
 	public SudokuParams(char emptyChar, List<Character> chars) {
+		this.emptyChar = emptyChar;
 		this.chars = chars;
 		this.size = chars.size();
 		this.boxSide = (int) Math.sqrt(size);

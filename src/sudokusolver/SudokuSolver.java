@@ -28,42 +28,46 @@ public class SudokuSolver {
 //				{ 11, 4, -1, 13, -1, -1, -1, -1, -1, -1, -1, -1, 3, -1, -1, 5 },
 //				{ -1, 5, -1, -1, 15, -1, -1, 6, 0, 4, -1, -1, 9, -1, -1, -1 }};
 
-		int[][] puzzle = {
-				{6, 0, 0, 0, 2, 0, 0, 0, 9}, 
-				{0, 1, 0, 3, 0, 7, 0, 5, 0}, 
-				{0, 0, 3, 0, 0, 0, 1, 0, 0}, 
-				{0, 9, 0, 0, 0, 0, 0, 2, 0}, 
-				{2, 0, 0, 8, 7, 5, 0, 0, 3}, 
-				{0, 0, 5, 0, 1, 0, 4, 0, 0}, 
-				{0, 7, 0, 0, 8, 0, 0, 9, 0}, 
-				{0, 0, 1, 0, 4, 0, 8, 0, 0}, 
-				{0, 0, 0, 2, 5, 9, 0, 0, 0} 
+		char[][] puzzle = {
+				{'6', '0', '0', '0', '2', '0', '0', '0', '9'}, 
+				{'0', '1', '0', '3', '0', '7', '0', '5', '0'}, 
+				{'0', '0', '3', '0', '0', '0', '1', '0', '0'}, 
+				{'0', '9', '0', '0', '0', '0', '0', '2', '0'}, 
+				{'2', '0', '0', '8', '7', '5', '0', '0', '3'}, 
+				{'0', '0', '5', '0', '1', '0', '4', '0', '0'}, 
+				{'0', '7', '0', '0', '8', '0', '0', '9', '0'}, 
+				{'0', '0', '1', '0', '4', '0', '8', '0', '0'}, 
+				{'0', '0', '0', '2', '5', '9', '0', '0', '0'} 
 		};
-		int [][] solution = new SudokuSolver(puzzle).solve();
-		System.out.println(Arrays.stream(solution)
-				.map(row -> Arrays.stream(row).mapToObj(Integer::toString).collect(Collectors.joining(" ")))
-				.collect(Collectors.joining("\n")));
+		char[][] solution = new SudokuSolver(puzzle).solve();
+		for (int row = 0; row < solution.length; row++) {
+			char[] rowChars = solution[row];
+			for (int col = 0; col < rowChars.length; col++) {
+				System.out.print((char) rowChars[col] + " ");
+			}
+			System.out.print('\n');
+		}
 	}
 
 	private static final int CONSTRAINT_COUNT = 4;
 
-	private int[][] puzzle;
+	private char[][] puzzle;
 	private SudokuParams params;
 
-	public SudokuSolver(int[][] puzzle) {
+	public SudokuSolver(char[][] puzzle) {
 		this(puzzle, SudokuParams.CLASSIC_PARAMS);
 	}
 
-	public SudokuSolver(int[][] puzzle, SudokuParams params) {
+	public SudokuSolver(char[][] puzzle, SudokuParams params) {
 		this.puzzle = puzzle;
 		this.params = params;
 	}
 
-	public int[][] solve() {
+	public char[][] solve() {
 		List<boolean[]> allValues = new ArrayList<>();
 		for (int row = 0; row < params.getSize(); row++) {
 			for (int col = 0; col < params.getSize(); col++) {
-				int value = puzzle[row][col];
+				char value = puzzle[row][col];
 
 				allValues.addAll(getValues(value, row, col));
 			}
@@ -79,9 +83,9 @@ public class SudokuSolver {
 		return convertSolution(problem.getSolution());
 	}
 
-	private int[][] convertSolution(List<List<Integer>> solution) {
+	private char[][] convertSolution(List<List<Integer>> solution) {
 		int size = params.getSize();
-		int[][] board = new int[size][size];
+		char[][] board = new char[size][size];
 
 		for (List<Integer> cell : solution) {
 			Collections.sort(cell);
@@ -90,14 +94,14 @@ public class SudokuSolver {
 			int value = valueInRow / size;
 			int valueInCell = cell.get(1);
 			int col = valueInCell % size;
-			board[row][col] = value;
+			board[row][col] = params.getCharAt(value);
 		}
 		return board;
 	}
 
-	private List<boolean[]> getValues(int value, int row, int col) {
-		return getValues((value == 0) ?
-				IntStream.range(0, params.getSize()).mapToObj(Integer::valueOf).collect(Collectors.toList()) : Arrays.asList(Integer.valueOf(value - 1)),
+	private List<boolean[]> getValues(char value, int row, int col) {
+		return getValues((value == params.getEmptyChar()) ?
+				IntStream.range(0, params.getSize()).mapToObj(Integer::valueOf).collect(Collectors.toList()) : Arrays.asList(params.indexOf(value)),
 				row, col, boxForCoords(row, col));
 	}
 
