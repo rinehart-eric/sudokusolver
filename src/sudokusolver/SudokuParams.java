@@ -1,5 +1,6 @@
 package sudokusolver;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -43,4 +44,14 @@ public class SudokuParams {
 			.mapToObj(Integer::toString)
 			.map(intStr -> intStr.charAt(0))
 			.collect(Collectors.toList()));
+
+	public static SudokuParams SIXTEEN_PARAMS = new SudokuParams(' ', IntStream.range(0, 16)
+			.mapToObj(Integer::toHexString)
+			.map(hexStr -> hexStr.charAt(0))
+			.collect(Collectors.toList())) {
+		@Override
+		public int indexOf(char c) {
+			return super.indexOf(Character.toLowerCase(c));
+		};
+	};
 }
