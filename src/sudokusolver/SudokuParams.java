@@ -1,6 +1,5 @@
 package sudokusolver;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -40,7 +39,7 @@ public class SudokuParams {
 		return boxSide;
 	}
 
-	public static SudokuParams CLASSIC_PARAMS = new SudokuParams('0', IntStream.rangeClosed(1, 9)
+	public static SudokuParams CLASSIC_PARAMS = new SudokuParams(' ', IntStream.rangeClosed(1, 9)
 			.mapToObj(Integer::toString)
 			.map(intStr -> intStr.charAt(0))
 			.collect(Collectors.toList()));
