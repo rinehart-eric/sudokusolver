@@ -15,6 +15,55 @@ public class Node {
 		this.header = header;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((down == null) ? 0 : down.hashCode());
+		result = prime * result + ((header == null) ? 0 : header.hashCode());
+		result = prime * result + ((left == null) ? 0 : left.hashCode());
+		result = prime * result + ((right == null) ? 0 : right.hashCode());
+		result = prime * result + ((up == null) ? 0 : up.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Node other = (Node) obj;
+		if (down == null) {
+			if (other.down != null)
+				return false;
+		} else if (!down.equals(other.down))
+			return false;
+		if (header == null) {
+			if (other.header != null)
+				return false;
+		} else if (!header.equals(other.header))
+			return false;
+		if (left == null) {
+			if (other.left != null)
+				return false;
+		} else if (!left.equals(other.left))
+			return false;
+		if (right == null) {
+			if (other.right != null)
+				return false;
+		} else if (!right.equals(other.right))
+			return false;
+		if (up == null) {
+			if (other.up != null)
+				return false;
+		} else if (!up.equals(other.up))
+			return false;
+		return true;
+	}
+
 	public Node getDown() {
 		return down;
 	}
