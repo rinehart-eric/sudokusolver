@@ -1,11 +1,13 @@
 package exactcover;
 
-public class Header extends AbstractNode<Header, Node> {
+public class Header extends AbstractNode<Header> {
 	private int size;
 	private int index;
 
 	public Header(int index) {
 		super(null);
+		super.setLeft(this);
+		super.setRight(this);
 		this.size = 0;
 		this.index = index;
 	}

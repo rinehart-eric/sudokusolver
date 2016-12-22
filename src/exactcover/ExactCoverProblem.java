@@ -7,7 +7,7 @@ import java.util.List;
 public class ExactCoverProblem {
 	private Header root;
 	private Header[] headers;
-	private AbstractNode<?, ?>[] o;
+	private AbstractNode<?>[] o;
 	private List<List<Integer>> solution;
 
 	public ExactCoverProblem(boolean[][] matrix) {
@@ -48,7 +48,7 @@ public class ExactCoverProblem {
 					linkHoriz(lastHoriz, n);
 					linkHoriz(n, firstHoriz);
 				}
-				Node lastVert = h.getUp();
+				AbstractNode<?> lastVert = h.getUp();
 				linkVert(lastVert, n);
 				linkVert(n, h);
 				h.incrSize();
@@ -58,12 +58,12 @@ public class ExactCoverProblem {
 		}
 	}
 
-	private <H extends AbstractNode<H, ?>> void linkHoriz(H left, H right) {
+	private <H extends AbstractNode<H>> void linkHoriz(H left, H right) {
 		left.setRight(right);
 		right.setLeft(left);
 	}
 
-	private <V extends AbstractNode<?, V>> void linkVert(V top, V bottom) {
+	private void linkVert(AbstractNode<?> top, AbstractNode<?> bottom) {
 		top.setDown(bottom);
 		bottom.setUp(top);
 	}
@@ -77,10 +77,10 @@ public class ExactCoverProblem {
 	 */
 	private void cover(Header header) {
 		linkHoriz(header.getLeft(), header.getRight());
-		AbstractNode<?, ?> colNode = header.getDown();
+		AbstractNode<?> colNode = header.getDown();
 		while (colNode != header) {
-			AbstractNode<?, ?> rowBase = colNode;
-			AbstractNode<?, ?> rowNode = rowBase.getRight();
+			AbstractNode<?> rowBase = colNode;
+			AbstractNode<?> rowNode = rowBase.getRight();
 			while (rowNode != rowBase) {
 				linkVert(rowNode.getUp(), rowNode.getDown());
 				rowNode.getHeader().decrSize();
@@ -100,10 +100,10 @@ public class ExactCoverProblem {
 	 * is inserted back into its column. Then the header is inserted back into the header list.
 	 */
 	private void uncover(Header header) {
-		AbstractNode<?, ?> colNode = header.getUp();
+		AbstractNode<?> colNode = header.getUp();
 		while (colNode != header) {
-			AbstractNode<?, ?> rowBase = colNode;
-			AbstractNode<?, ?> rowNode = rowBase.getLeft();
+			AbstractNode<?> rowBase = colNode;
+			AbstractNode<?> rowNode = rowBase.getLeft();
 			while (rowNode != rowBase) {
 				rowNode.getHeader().incrSize();
 				rowNode.getDown().setUp(rowNode);
@@ -131,11 +131,11 @@ public class ExactCoverProblem {
 		Header h = chooseHeader();
 		cover(h);
 
-		AbstractNode<?, ?> r = h.getDown();
+		AbstractNode<?> r = h.getDown();
 		while (!isSolved() && r != h) {
 			o[i] = r;
-			AbstractNode<?, ?> jBase = r;
-			AbstractNode<?, ?> j = jBase.getRight();
+			AbstractNode<?> jBase = r;
+			AbstractNode<?> j = jBase.getRight();
 			while (j != jBase) {
 				cover(j.getHeader());
 
@@ -176,7 +176,7 @@ public class ExactCoverProblem {
 		solution.clear();
 		for (int i = 0; i < k; i++) {
 			List<Integer> row = new ArrayList<>();
-			AbstractNode<?, ?> c = o[i].getRight();
+			AbstractNode<?> c = o[i].getRight();
 			row.add(o[i].getHeader().getIndex());
 
 			while (c != o[i]) {

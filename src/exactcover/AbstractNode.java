@@ -1,29 +1,31 @@
 package exactcover;
 
-public abstract class AbstractNode<H extends AbstractNode<?, ?>, V extends AbstractNode<?, ?>> {
-	private V up;
-	private V down;
+public abstract class AbstractNode<H extends AbstractNode<H>> {
+	private AbstractNode<?> up;
+	private AbstractNode<?> down;
 	private H left;
 	private H right;
 	private Header header;
 
 	public AbstractNode(Header header) {
+		up = this;
+		down = this;
 		this.header = header;
 	}
 
-	public V getUp() {
+	public AbstractNode<?> getUp() {
 		return up;
 	}
 
-	public void setUp(V up) {
+	public void setUp(AbstractNode<?> up) {
 		this.up = up;
 	}
 
-	public V getDown() {
+	public AbstractNode<?> getDown() {
 		return down;
 	}
 
-	public void setDown(V down) {
+	public void setDown(AbstractNode<?> down) {
 		this.down = down;
 	}
 
