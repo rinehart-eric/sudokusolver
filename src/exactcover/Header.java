@@ -1,6 +1,6 @@
 package exactcover;
 
-public class Header extends Node {
+public class Header extends AbstractNode<Header, Node> {
 	private int size;
 	private int index;
 
@@ -8,22 +8,6 @@ public class Header extends Node {
 		super(null);
 		this.size = 0;
 		this.index = index;
-	}
-
-	public Header getLeft() {
-		return (Header) super.getLeft();
-	}
-
-	public void setLeft(Header left) {
-		super.setLeft(left);
-	}
-
-	public Header getRight() {
-		return (Header) super.getRight();
-	}
-
-	public void setRight(Header right) {
-		super.setRight(right);
 	}
 
 	public int getSize() {
